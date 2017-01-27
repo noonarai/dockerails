@@ -2,6 +2,7 @@ FROM ruby:2.3-alpine
 
 RUN apk add --no-cache \
   alpine-sdk \
+  tzdata \
   nodejs \
   mariadb-dev
 
