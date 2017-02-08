@@ -10,6 +10,5 @@ ENV APP_ROOT /opt/app
 
 WORKDIR $APP_ROOT
 
-COPY Gemfile Gemfile
-COPY Gemfile.lock Gemfile.lock
+COPY Gemfile* $APP_ROOT/
 RUN bundle install -j4
