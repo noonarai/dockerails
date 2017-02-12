@@ -9,19 +9,25 @@ services:
       - .:/opt/app
     command: bundle exec rails s Puma -b 0.0.0.0
     environment:
-      DATABASE_URL: 'mysql2://db_user:db_pass@db/db_name'
+      DATABASE_URL: 'mysql2://db_user:db_pass@mysql/db_name'
+      REDIS_URL: redis://redis:6379
     links:
-      - db
-  db:
+      - mysql
+      - redis
+  mysql:
     image: mysql:5
     volumes:
-      - db_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
       MYSQL_DATABASE:             db_name
       MYSQL_USER:                 db_user
       MYSQL_PASSWORD:             db_pass
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+  redis:
+    image: redis:3-alpine
+    volumes:
+      - redis_data:/data
   web:
     build: containers/nginx
     volumes:
@@ -34,4 +40,5 @@ services:
     links:
       - app
 volumes:
-  db_data:
+  mysql_data:
+  redis_data:
