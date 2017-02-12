@@ -21,7 +21,7 @@ services:
         RAILS_ENV: development
     volumes:
       - .:/opt/app
-    command: bundle exec sidekiq -L log/sidekiq.log
+    command: bundle exec sidekiq -C config/sidekiq.yml
     environment:
       DATABASE_URL: 'mysql2://db_user:db_pass@db/db_name'
       REDIS_URL: redis://cache:6379
