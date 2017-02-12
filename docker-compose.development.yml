@@ -14,6 +14,20 @@ services:
     links:
       - db
       - cache
+  worker:
+    build:
+      context: .
+      args:
+        RAILS_ENV: development
+    volumes:
+      - .:/opt/app
+    command: bundle exec sidekiq -L log/sidekiq.log
+    environment:
+      DATABASE_URL: 'mysql2://db_user:db_pass@db/db_name'
+      REDIS_URL: redis://cache:6379
+    links:
+      - db
+      - cache
   db:
     image: mysql:5
     volumes:
