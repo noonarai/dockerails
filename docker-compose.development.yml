@@ -10,8 +10,24 @@ services:
     command: bundle exec rails s Puma -b 0.0.0.0
     environment:
       DATABASE_URL: 'mysql2://db_user:db_pass@db/db_name'
+      REDIS_URL: redis://cache:6379
     links:
       - db
+      - cache
+  worker:
+    build:
+      context: .
+      args:
+        RAILS_ENV: development
+    volumes:
+      - .:/opt/app
+    command: bundle exec sidekiq -L log/sidekiq.log
+    environment:
+      DATABASE_URL: 'mysql2://db_user:db_pass@db/db_name'
+      REDIS_URL: redis://cache:6379
+    links:
+      - db
+      - cache
   db:
     image: mysql:5
     volumes:
@@ -22,6 +38,10 @@ services:
       MYSQL_USER:                 db_user
       MYSQL_PASSWORD:             db_pass
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+  cache:
+    image: redis:3-alpine
+    volumes:
+      - cache_data:/data
   web:
     build: containers/nginx
     volumes:
@@ -30,7 +50,9 @@ services:
       - ./tmp:/opt/app/tmp
     ports:
       - "80:80"
+      - "443:443"
     links:
       - app
 volumes:
   db_data:
+  cache_data:
