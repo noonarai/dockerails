@@ -1,10 +1,10 @@
 FROM ruby:2.3-alpine
 
 RUN apk add --no-cache \
-  alpine-sdk \
-  tzdata \
-  nodejs \
-  mariadb-dev
+    alpine-sdk \
+    tzdata \
+    nodejs \
+    mariadb-dev
 
 ENV APP_ROOT /opt/app
 
