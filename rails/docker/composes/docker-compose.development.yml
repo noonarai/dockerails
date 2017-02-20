@@ -43,7 +43,7 @@ services:
     volumes:
       - cache_data:/data
   web:
-    build: containers/nginx
+    build: docker/containers/nginx
     volumes:
       - ./log:/opt/app/log
       - ./tmp:/opt/app/tmp
