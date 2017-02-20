@@ -1,0 +1,62 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      args:
+        RAILS_ENV: production
+    volumes:
+      - public_data:/opt/app/public
+      - ./log:/opt/app/log
+    environment:
+      DATABASE_URL: 'mysql2://db_user:db_pass@db/db_name'
+      REDIS_URL:    'redis://cache:6379'
+      SECRET_KEY_BASE: ''
+    links:
+      - db
+      - cache
+    command: bundle exec rails s Puma -b 0.0.0.0
+  worker:
+    build:
+      context: .
+      args:
+        RAILS_ENV: production
+    volumes:
+      - public_data:/opt/app/public
+      - ./log:/opt/app/log
+    environment:
+      DATABASE_URL: 'mysql2://db_user:db_pass@db/db_name'
+      REDIS_URL:    'redis://cache:6379'
+      SECRET_KEY_BASE: ''
+    links:
+      - db
+      - cache
+    command: bundle exec sidekiq -C config/sidekiq.yml
+  db:
+    image: mysql:5
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_DATABASE:             db_name
+      MYSQL_USER:                 db_user
+      MYSQL_PASSWORD:             db_pass
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+  cache:
+    image: redis:3-alpine
+    volumes:
+      - cache_data:/data
+  web:
+    build: containers/nginx
+    volumes:
+      - ./log:/opt/app/log
+      - ./tmp:/opt/app/tmp
+      - public_data:/opt/app/public
+    ports:
+      - "80:80"
+    links:
+      - app
+volumes:
+  db_data:
+  cache_data:
+  public_data:
