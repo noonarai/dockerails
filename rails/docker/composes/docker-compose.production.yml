@@ -11,6 +11,7 @@ services:
     environment:
       DATABASE_URL: 'mysql2://db_user:db_pass@db/db_name'
       REDIS_URL:    'redis://cache:6379'
+      RAILS_SERVE_STATIC_FILES: 'true'
       SECRET_KEY_BASE: ''
     links:
       - db
@@ -27,6 +28,7 @@ services:
     environment:
       DATABASE_URL: 'mysql2://db_user:db_pass@db/db_name'
       REDIS_URL:    'redis://cache:6379'
+      RAILS_SERVE_STATIC_FILES: 'true'
       SECRET_KEY_BASE: ''
     links:
       - db
